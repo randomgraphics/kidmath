@@ -1,0 +1,28 @@
+﻿<Window x:Class="MathGenenrator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MathGenenrator"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="2000" Width="1500">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="addButton1" Content="5以内加减法" Tag="5" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton2" Content="6以内加减法" Tag="6" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton3" Content="7以内加减法" Tag="7" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton4" Content="8以内加减法" Tag="8" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton5" Content="9以内加减法" Tag="9" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton6" Content="一位数加减法" Click="Button_Click" FontSize="32" Margin="10,0"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <TextBox x:Name="textBox1" Grid.Column="0" FontFamily="Consolas"/>
+        </Grid>
+        </Grid>
+</Window>
