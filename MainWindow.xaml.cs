@@ -21,6 +21,8 @@ namespace MathGenenrator
     /// </summary>
     public partial class MainWindow : Window
     {
+        MathGen g = new MathGen();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,9 +31,12 @@ namespace MathGenenrator
 
         void Button_Click(object sender, RoutedEventArgs e)
         {
-            var g = new MathGen();
-
-            if (sender == this.addButton1 ||
+            if (sender == this.addButton0)
+            {
+                this.textBox1.Text = g.GetText(true);
+            }
+#if false
+            else if (sender == this.addButton1 ||
                 sender == this.addButton2 ||
                 sender == this.addButton3 ||
                 sender == this.addButton4 ||
@@ -43,6 +48,20 @@ namespace MathGenenrator
             {
                 this.textBox1.Text = g.GenAdd2(10);
             }
+#endif
+            else if (sender == this.addButton8)
+            {
+                g.GenDec(10, 99);
+                this.textBox1.Text = g.GetText(false);
+            }
+            else if (sender == this.addButton9)
+            {
+                g.GenDec(100, 999);
+                this.textBox1.Text = g.GetText(false);
+            }
+
+            this.textBox1.Background = g.RandomColor(1, 127);
+            this.textBox1.Foreground = g.RandomColor(128, 255);
 
             UpdateFontSize();
         }
@@ -100,7 +119,45 @@ namespace MathGenenrator
 
     public class MathGen
     {
+        enum Operator
+        {
+            ADD,
+            DEC,
+        };
+
+        static string Op2Str(Operator op)
+        {
+            switch(op)
+            {
+                case Operator.ADD: return " + ";
+                case Operator.DEC: return " - ";
+            }
+            return "";
+        }
+
+        class Question
+        {
+            public Operator op;
+            public int arg1, arg2;
+            public int answer;
+            public string ToString(bool showAnswer)
+            {
+                var s = itoa(arg1) + Op2Str(op) + itoa(arg2, true) + " =";
+                if (showAnswer) s += " " + itoa(answer);
+                return s;
+            }
+        };
+
+        List<Question> questions = new List<Question>(30);
         Random rand = new Random();
+
+        public Brush RandomColor(int min, int max)
+        {
+            return new SolidColorBrush(Color.FromRgb(
+                (byte)rand.Next(min, max),
+                (byte)rand.Next(min, max),
+                (byte)rand.Next(min, max)));
+        }
 
         bool Percent(int percent)
         {
@@ -115,6 +172,7 @@ namespace MathGenenrator
                 return string.Format("{0}", i);
         }
 
+#if false
         public string GenAdd2(int maxsum)
         {
             Func<Random, string> expression = (r) =>
@@ -181,6 +239,41 @@ namespace MathGenenrator
                 string b = expression(this.rand);
                 string c = expression(this.rand);
                 string line = string.Format("{0,-30} {1,-30} {2}\r\n\r\n", a, b, c);
+                text += line;
+            }
+            return text;
+        }
+#endif
+        public void GenDec(int min, int max)
+        {
+            Func<Random, string> expression = (r) =>
+            {
+                int a = r.Next(min, max);
+                int b = r.Next(min, a);
+                return itoa(a) + "-" + itoa(b, true) + " =";
+            };
+
+            questions = new List<Question>();
+            for (int i = 0; i < 30; ++i)
+            {
+                var q = new Question();
+                q.arg1 = this.rand.Next(min, max);
+                q.arg2 = this.rand.Next(min, q.arg1);
+                q.op = Operator.DEC;
+                q.answer = q.arg1 - q.arg2;
+                questions.Add(q);
+            }
+        }
+
+        public string GetText(bool showAnswer)
+        {
+            string text = string.Empty;
+            for (int i = 0; i < 10; ++i)
+            {
+                string a = questions[i * 3 + 0].ToString(showAnswer);
+                string b = questions[i * 3 + 1].ToString(showAnswer);
+                string c = questions[i * 3 + 2].ToString(showAnswer);
+                string line = string.Format("{0,-20} {1,-20} {2}\r\n\r\n", a, b, c);
                 text += line;
             }
             return text;
