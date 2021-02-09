@@ -23,154 +23,60 @@ namespace MathGenenrator
     {
         MathGen g = new MathGen();
 
+        SimpleAdd[] questions;
+
         public MainWindow()
         {
             InitializeComponent();
-            this.textBox1.SizeChanged += (s, e) => { UpdateFontSize(); };
+
+            questions = new SimpleAdd[]
+            {
+                this.q0,
+                this.q1,
+                this.q2,
+                this.q3,
+                this.q4,
+                this.q5,
+                this.q6,
+                this.q7,
+                this.q8,
+                this.q9,
+            };
         }
 
         void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (sender == this.addButton0)
+            if (sender == this.addButton8)
             {
-                this.textBox1.Text = g.GetText(true);
-            }
-#if false
-            else if (sender == this.addButton1 ||
-                sender == this.addButton2 ||
-                sender == this.addButton3 ||
-                sender == this.addButton4 ||
-                sender == this.addButton5)
-            {
-                this.textBox1.Text = g.GenAdd2(1, int.Parse(((Button)sender).Tag.ToString()));
-            }
-            else if (sender == this.addButton6)
-            {
-                this.textBox1.Text = g.GenAdd2(10);
-            }
-#endif
-            else if (sender == this.addButton8)
-            {
-                g.GenDec(10, 99);
-                this.textBox1.Text = g.GetText(false);
+                g.Gen20(this.questions.Length);
             }
             else if (sender == this.addButton9)
             {
-                g.GenDec(100, 999);
-                this.textBox1.Text = g.GetText(false);
+                g.GenDec(this.questions.Length, 10, 99);
             }
 
-            this.textBox1.Background = g.RandomColor(1, 127);
-            this.textBox1.Foreground = g.RandomColor(128, 255);
-
-            UpdateFontSize();
-        }
-
-        void UpdateFontSize()
-        {
-            if (string.IsNullOrWhiteSpace(this.textBox1.Text)) return;
-
-            double targetWidth = this.textBox1.ActualWidth;
-            double minWidth = targetWidth * .95;
-
-            double targetHeight = this.textBox1.ActualHeight;
-            double minHeight = targetHeight * .95;
-
-            double size = this.textBox1.FontSize;
-            double step = size;
-
-            for(; ; )
+            for (int i = 0; i < this.questions.Length; ++i)
             {
-                var f = new FormattedText(
-                    this.textBox1.Text,
-                    CultureInfo.CurrentCulture,
-                    this.textBox1.FlowDirection,
-                    new Typeface(this.textBox1.FontFamily, this.textBox1.FontStyle, this.textBox1.FontWeight, this.textBox1.FontStretch),
-                    size,
-                    this.textBox1.Foreground);
-
-                if (f.Width < minWidth && f.Height < minHeight)
-                {
-                    if (step < 0)
-                    {
-                        step = -step / 2;
-                    }
-                }
-                else if (f.Width > targetWidth || f.Height > targetHeight)
-                {
-                    if (step > 0)
-                    {
-                        step = -step / 2;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-
-                size += step;
-
-                if (size < 1) size = 1;
+                var q = g.questions[i];
+                this.questions[i].A = q.a;
+                this.questions[i].B = q.b;
+                this.questions[i].Op = q.op;
+                this.questions[i].C = "";
             }
-
-            this.textBox1.FontSize = size;
         }
     }
 
     public class MathGen
     {
-        enum Operator
+        // a op b = c
+        public struct Question
         {
-            ADD,
-            DEC,
+            public string op;
+            public int a;
+            public int b;
         };
 
-        static string Op2Str(Operator op)
-        {
-            switch(op)
-            {
-                case Operator.ADD: return " + ";
-                case Operator.DEC: return " - ";
-            }
-            return "";
-        }
-
-        class Question
-        {
-            public Operator op;
-            public int arg1, arg2;
-            public int answer;
-            public string ToString(bool showAnswer)
-            {
-                var s = itoa(arg1) + Op2Str(op) + itoa(arg2, true) + " =";
-                if (showAnswer) s += " " + itoa(answer);
-                return s;
-            }
-        };
-
-        List<Question> questions = new List<Question>(30);
-        Random rand = new Random();
-
-        public Brush RandomColor(int min, int max)
-        {
-            return new SolidColorBrush(Color.FromRgb(
-                (byte)rand.Next(min, max),
-                (byte)rand.Next(min, max),
-                (byte)rand.Next(min, max)));
-        }
-
-        bool Percent(int percent)
-        {
-            return this.rand.Next(0, 100) < percent;
-        }
-
-        static string itoa(int i, bool parentheses = false)
-        {
-            if (i < 0 && parentheses)
-                return string.Format("({0})", i);
-            else
-                return string.Format("{0}", i);
-        }
+        public List<Question> questions;
 
 #if false
         public string GenAdd2(int maxsum)
@@ -244,39 +150,50 @@ namespace MathGenenrator
             return text;
         }
 #endif
-        public void GenDec(int min, int max)
-        {
-            Func<Random, string> expression = (r) =>
-            {
-                int a = r.Next(min, max);
-                int b = r.Next(min, a);
-                return itoa(a) + "-" + itoa(b, true) + " =";
-            };
 
-            questions = new List<Question>();
-            for (int i = 0; i < 30; ++i)
+        /// <summary>
+        /// 20以内加减法
+        /// </summary>
+        /// <param name="count"></param>
+        public void Gen20(int count)
+        {
+            questions = new List<Question>(count);
+            for (int i = 0; i < count; ++i)
             {
                 var q = new Question();
-                q.arg1 = this.rand.Next(min, max);
-                q.arg2 = this.rand.Next(min, q.arg1);
-                q.op = Operator.DEC;
-                q.answer = q.arg1 - q.arg2;
+
+                if (this.rand.Next(0, 100) > 50)
+                {
+                    // add
+                    q.op = "+";
+                    q.a = this.rand.Next(10, 19);
+                    q.b = this.rand.Next(10, 19);
+                }
+                else
+                {
+                    // dec
+                    q.op = "-";
+                    q.b = this.rand.Next(3, 12);
+                    q.a = this.rand.Next(q.b, 19);
+                }
+
                 questions.Add(q);
             }
         }
 
-        public string GetText(bool showAnswer)
+        public void GenDec(int count, int min, int max)
         {
-            string text = string.Empty;
-            for (int i = 0; i < 10; ++i)
+            questions = new List<Question>(count);
+            for (int i = 0; i < count; ++i)
             {
-                string a = questions[i * 3 + 0].ToString(showAnswer);
-                string b = questions[i * 3 + 1].ToString(showAnswer);
-                string c = questions[i * 3 + 2].ToString(showAnswer);
-                string line = string.Format("{0,-20} {1,-20} {2}\r\n\r\n", a, b, c);
-                text += line;
+                var q = new Question();
+                q.op = "-";
+                q.a = this.rand.Next(min, max);
+                q.b = this.rand.Next(min, q.a);
+                questions.Add(q);
             }
-            return text;
         }
+
+        Random rand = new Random();
     }
 }
