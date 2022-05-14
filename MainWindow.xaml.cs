@@ -46,13 +46,17 @@ namespace MathGenenrator
 
         void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (sender == this.addButton8)
+            if (sender == this.addButton6)
             {
-                g.Gen20(this.questions.Length);
+                g.GenMul(this.questions.Length);
+            }
+            else if (sender == this.addButton8)
+            {
+                g.GenDiv(this.questions.Length);
             }
             else if (sender == this.addButton9)
             {
-                g.GenDec(this.questions.Length, 10, 99);
+                g.GenDec(this.questions.Length, 10, 100);
             }
 
             for (int i = 0; i < this.questions.Length; ++i)
@@ -181,6 +185,46 @@ namespace MathGenenrator
             }
         }
 
+        /// <summary>
+        /// 两位数乘1位数 (<100)
+        /// </summary>
+        /// <param name="count"></param>
+        public void GenMul(int count)
+        {
+            questions = new List<Question>(count);
+            for (int i = 0; i < count; ++i)
+            {
+                var q = new Question();
+                q.op = "*";
+                q.b = this.rand.Next(2, 10);
+                q.a = this.rand.Next(q.b * 10, 100) / q.b;
+                questions.Add(q);
+            }
+        }
+
+        /// <summary>
+        /// 2位数除法
+        /// </summary>
+        /// <param name="count"></param>
+        public void GenDiv(int count)
+        {
+            questions = new List<Question>(count);
+            for (int i = 0; i < count; ++i)
+            {
+                var q = new Question();
+                q.op = "/";
+                q.a = this.rand.Next(11, 100);
+                q.b = this.rand.Next(10, q.a);
+                questions.Add(q);
+            }
+        }
+
+        /// <summary>
+        /// 100以内减法
+        /// </summary>
+        /// <param name="count"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
         public void GenDec(int count, int min, int max)
         {
             questions = new List<Question>(count);
