@@ -186,7 +186,7 @@ namespace MathGenenrator
         }
 
         /// <summary>
-        /// 两位数乘1位数 (<100)
+        /// 两位数乘1位数
         /// </summary>
         /// <param name="count"></param>
         public void GenMul(int count)
@@ -197,7 +197,7 @@ namespace MathGenenrator
                 var q = new Question();
                 q.op = "*";
                 q.b = this.rand.Next(2, 10);
-                q.a = this.rand.Next(q.b * 10, 100) / q.b;
+                q.a = this.rand.Next(10, 100);
                 questions.Add(q);
             }
         }
