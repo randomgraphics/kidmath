@@ -50,13 +50,17 @@ namespace MathGenenrator
             {
                 g.GenMul(this.questions.Length);
             }
+            else if (sender == this.addButton7)
+            {
+                g.GenDiv2(this.questions.Length);
+            }
             else if (sender == this.addButton8)
             {
-                g.GenDiv(this.questions.Length);
+                g.GenDiv3(this.questions.Length);
             }
             else if (sender == this.addButton9)
             {
-                g.GenDec(this.questions.Length, 10, 100);
+                g.GenDec(this.questions.Length, 10, 99);
             }
 
             for (int i = 0; i < this.questions.Length; ++i)
@@ -66,6 +70,7 @@ namespace MathGenenrator
                 this.questions[i].B = q.b;
                 this.questions[i].Op = q.op;
                 this.questions[i].C = "";
+                this.questions[i].D = "";
             }
         }
     }
@@ -206,15 +211,37 @@ namespace MathGenenrator
         /// 2位数除法
         /// </summary>
         /// <param name="count"></param>
-        public void GenDiv(int count)
+        public void GenDiv2(int count)
         {
             questions = new List<Question>(count);
             for (int i = 0; i < count; ++i)
             {
                 var q = new Question();
                 q.op = "/";
-                q.a = this.rand.Next(11, 100);
-                q.b = this.rand.Next(10, q.a);
+                q.a = this.rand.Next(11, 99);
+                q.b = this.rand.Next(3, q.a / 2);
+                questions.Add(q);
+            }
+        }
+
+        /// <summary>
+        /// 三位数除以两位数 (结果小于10）
+        /// </summary>
+        /// <param name="count"></param>
+        /// <param name="minDivident"></param>
+        /// <param name="maxDivident"></param>
+        /// <param name="minDivisor"></param>
+        /// <param name="maxDivisor"></param>
+        /// <param name="timedTest"></param>
+        public void GenDiv3(int count)
+        {
+            questions = new List<Question>(count);
+            for (int i = 0; i < count; ++i)
+            {
+                var q = new Question();
+                q.op = "/";
+                q.a = this.rand.Next(101, 800);
+                q.b = this.rand.Next(q.a / 10, Math.Min(q.a / 2, 99));
                 questions.Add(q);
             }
         }

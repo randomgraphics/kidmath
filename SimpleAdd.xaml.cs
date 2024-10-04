@@ -25,6 +25,8 @@ namespace MathGenenrator
         private string op = "-";
         private int b = 1;
         private string c = "";
+        private string d = "";
+        private bool showQuotient = false;
         private Brush score; //< yellow for wrong answer, green for write answer
 
         private void CheckAnswer()
@@ -36,6 +38,7 @@ namespace MathGenenrator
             }
 
             string answer;
+            string quotient = d.ToString();
             if ("+" == op)
             {
                 answer = (a + b).ToString();
@@ -51,18 +54,19 @@ namespace MathGenenrator
             else if ("/" == op)
             {
                 answer = (a / b).ToString();
+                quotient = (a % b).ToString();
             }
             else
             {
                 return;
             }
-            if (c == answer)
+            if ((c != answer) || (showQuotient && d != quotient))
             {
-                Score = Brushes.Green;
+                Score = Brushes.Red;
             }
             else
             {
-                Score = Brushes.Red;
+                Score = Brushes.Green;
             }
         }
 
@@ -76,9 +80,26 @@ namespace MathGenenrator
         {
             this.score = this.Background;
             InitializeComponent();
+            ShowQuotient = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool ShowQuotient {
+            get { return this.showQuotient; }
+            set
+            {
+                this.showQuotient = value;
+                if (value) {
+                    this.r.Visibility = Visibility.Visible;
+                    this.q.Visibility = Visibility.Visible;
+                } else
+                {
+                    this.r.Visibility = Visibility.Collapsed;
+                    this.q.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
 
         public int A
         {
@@ -118,6 +139,7 @@ namespace MathGenenrator
                     if ("+" == value || "-" == value || "*" == value || "/" == value)
                     {
                         this.op = value;
+                        ShowQuotient = "/" == this.op;
                         NotifyPropertyChanged("Op");
                         CheckAnswer();
                     }
@@ -140,6 +162,20 @@ namespace MathGenenrator
             }
         }
 
+        public string D
+        {
+            get { return d; }
+            set
+            {
+                if (this.d != value)
+                {
+                    this.d = value;
+                    NotifyPropertyChanged("D");
+                    CheckAnswer();
+                }
+            }
+        }
+
         public Brush Score
         {
             get { return this.score; }
@@ -153,10 +189,15 @@ namespace MathGenenrator
             }
         }
 
-        private void AnswerChanged(object sender, TextChangedEventArgs e)
+        private void Answer1Changed(object sender, TextChangedEventArgs e)
         {
             TextBox tb = sender as TextBox;
             this.C = tb.Text;
+        }
+        private void Answer2Changed(object sender, TextChangedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            this.D = tb.Text;
         }
     }
 }

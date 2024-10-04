@@ -25,9 +25,10 @@
                 <Button x:Name="addButton4" Content="8以内加减法" Tag="8" Click="Button_Click" FontSize="32" Margin="10,0"/>
                 <Button x:Name="addButton5" Content="9以内加减法" Tag="9" Click="Button_Click" FontSize="32" Margin="10,0"/>
                 -->
-                <Button x:Name="addButton6" Content="二位数乘一位数" Click="Button_Click" FontSize="32" Margin="10,0"/>
-                <Button x:Name="addButton8" Content="二位数除法" Click="Button_Click" FontSize="32" Margin="10,0"/>
                 <Button x:Name="addButton9" Content="二位数减法" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton6" Content="二位数乘一位数" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton7" Content="二位数除法" Click="Button_Click" FontSize="32" Margin="10,0"/>
+                <Button x:Name="addButton8" Content="三位数除法" Click="Button_Click" FontSize="32" Margin="10,0" Visibility="Collapsed"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Grid.ColumnSpan="2">
